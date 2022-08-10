@@ -19,12 +19,12 @@ public class HttpRequestsExecutor {
         R send(HttpClient httpClient,HttpRequest httpRequest,BodyHandler<T> bodyHandler) throws InterruptedException,IOException;
     }
 
-    private <T> Optional<HttpResponse<T>> executeRequestSync(URI uri,BodyHandler<T> bodyHandler){
+    public <T> Optional<HttpResponse<T>> executeRequestSync(URI uri,BodyHandler<T> bodyHandler){
         SendMethod<HttpResponse<T>,T> sendMethod = HttpClient::send;
         return executeRequest(uri,sendMethod,bodyHandler);
     }
 
-    private <T> Optional<CompletableFuture<HttpResponse<T>>> executeRequestAsync(URI uri,BodyHandler<T> bodyHandler){
+    public <T> Optional<CompletableFuture<HttpResponse<T>>> executeRequestAsync(URI uri,BodyHandler<T> bodyHandler){
         SendMethod<CompletableFuture<HttpResponse<T>>,T> sendMethod = HttpClient::sendAsync;
         return executeRequest(uri,sendMethod,bodyHandler);
     }
