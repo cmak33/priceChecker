@@ -12,10 +12,7 @@ import javafx.stage.Stage;
 import org.jsoup.nodes.Element;
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,22 +29,20 @@ public class HelloApplication extends Application {
         try {
             ClassField<Product, Long> price = new ClassField<>(fieldSetter, "price", Product.class, Long.class);
             ClassField<Product,String> name = new ClassField<>(fieldSetter,"name",Product.class,String.class);
-            PropertyParseInfo priceInfo = new PropertyParseInfo(new URI("https://www.kufar.by/item/164951615"),"div span.styles_main__PU1v4");
-            PropertyParseInfo nameInfo = new PropertyParseInfo(new URI("https://www.kufar.by/item/164951615"),"div h1.styles_brief_wrapper__title__x59rm[data-name='av_title']");
-            SimplePropertyParser<Product,Long> parserPrice = new SimplePropertyParser<Product,Long>(price,(elements)->{
-                Element el = elements.first();
-                return Long.parseLong(el.text().split(" ")[0]);
+            ElementsSelectionInfo priceInfo = new ElementsSelectionInfo(new URI("https://www.kufar.by/item/164951615"),"div span.styles_main__PU1v4");
+            ElementsSelectionInfo nameInfo = new ElementsSelectionInfo(new URI("https://www.kufar.by/item/164951615"),"div h1.styles_brief_wrapper__title__x59rm[data-name='av_title']");
+            FieldFromElementsSetter<Product,Long> priceSetter = new FieldFromElementsSetter<>(price,(elements)->{
+                String text = elements.first().text();
+                return Long.parseLong(text.split(" ")[0]);
             });
-            SimplePropertyParser<Product,String> parserName = new SimplePropertyParser<>(name,(elements)->{
-                return elements.first().text();
+            FieldFromElementsSetter<Product,String> nameSetter = new FieldFromElementsSetter<>(name,(elements)->{
+               return elements.first().text();
             });
-            ClassParser<Product> classParser = new ClassParser<Product>(List.of(parserPrice,parserName),new ArrayList<>());
-            ClassParserInfo<Product> parserInfo = new ClassParserInfo<>(classParser,new HashMap<>(){
-                {put(price,priceInfo);put(name,nameInfo);}
-            });
-            ParserManager manager = new ParserManager(new HtmlParser(),new HttpRequestsExecutor());
-            Product product = new Product();
-            manager.parse(parserInfo,product);
+            FieldParseInfo<Product,Long> priceParseInfo = new FieldParseInfo<>(priceSetter,priceInfo);
+            FieldParseInfo<Product,String> nameParseInfo = new FieldParseInfo<>(nameSetter,nameInfo);
+            ClassParseInfo<Product> classParseInfo = new ClassParseInfo<Product>(Product::new,List.of(priceParseInfo,nameParseInfo),new ArrayList<>());
+            ClassParser parser = new ClassParser(new HtmlParser(),new HttpRequestsExecutor());
+            Product product = parser.parse(classParseInfo);
             System.out.println(product.getPrice());
             System.out.println(product.getName());
         } catch (Exception e){}

@@ -2,6 +2,6 @@ package com.example.pricechecker.logic.parsing.html;
 
 import org.jsoup.select.Elements;
 
-public interface PropertyConverter<ValueType> {
-    ValueType parse(Elements elements);
+public interface ElementsConverter<ValueType> {
+    ValueType convert(Elements elements);
 }

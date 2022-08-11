@@ -18,5 +18,4 @@ public class FieldSetter {
             logger.error("could not set such field to object",fieldException);
         }
     }
-
 }
