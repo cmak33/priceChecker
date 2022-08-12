@@ -19,6 +19,10 @@ public class HttpRequestsExecutor {
         R send(HttpClient httpClient,HttpRequest httpRequest,BodyHandler<T> bodyHandler) throws InterruptedException,IOException;
     }
 
+    public Optional<String> receiveHtml(URI uri){
+        return executeRequestSync(uri, HttpResponse.BodyHandlers.ofString()).map(HttpResponse::body);
+    }
+
     public <T> Optional<HttpResponse<T>> executeRequestSync(URI uri,BodyHandler<T> bodyHandler){
         SendMethod<HttpResponse<T>,T> sendMethod = HttpClient::send;
         return executeRequest(uri,sendMethod,bodyHandler);

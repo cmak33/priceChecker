@@ -1,9 +1,9 @@
 package com.example.pricechecker.logic.parsing.html;
 
 import com.example.pricechecker.logic.httpRequests.HttpRequestsExecutor;
-import org.jsoup.select.Elements;
 
-import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public record ClassParser(HtmlParser htmlParser,
@@ -15,20 +15,19 @@ public record ClassParser(HtmlParser htmlParser,
         return value;
     }
 
-    private <ClassType,FieldType> void parseSimpleField(ClassType owner, FieldParseInfo<ClassType,FieldType> parseInfo){
-        Elements elements = findElements(parseInfo.elementsSelectionInfo());
-        parseInfo.fieldFromElementsSetter().setFromElements(owner,elements);
+    private <ClassType,FieldType,CollectionType> void parseSimpleField(ClassType owner, FieldParseInfo<ClassType,FieldType,CollectionType> parseInfo){
+        List<CollectionType> pagesParseValues = new ArrayList<>();
+        parseInfo.pagesParseInfo().forEach(info-> parsePage(info).ifPresent(pagesParseValues::add));
+        parseInfo.setValue(owner,pagesParseValues);
     }
 
-    private Elements findElements(ElementsSelectionInfo elementsSelectionInfo){
-        Elements elements;
-        Optional<HttpResponse<String>> response = executor.executeRequestSync(elementsSelectionInfo.uri(), HttpResponse.BodyHandlers.ofString());
-        if(response.isPresent()){
-            elements =htmlParser.findElementsByQuery(response.get().body(),elementsSelectionInfo.selectQuery());
+    private <T> Optional<T> parsePage(PageParseInfo<T> pageInfo){
+        Optional<String> html = executor.receiveHtml(pageInfo.uri());
+        if(html.isPresent()){
+            return pageInfo.pageParser().parseValue(html.get());
         } else{
-            elements = new Elements();
+            return Optional.empty();
         }
-        return elements;
     }
 
     private <ClassType,FieldType> void parseCompositeField(ClassType owner, CompositeFieldParseInfo<ClassType,FieldType> compositeFieldParseInfo){
