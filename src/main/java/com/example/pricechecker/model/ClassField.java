@@ -4,16 +4,22 @@ public class ClassField<ClassType, FieldType>{
     private final FieldSetter fieldSetter;
     private final String fieldName;
 
-    public ClassField(FieldSetter fieldSetter, String fieldName, Class<ClassType> ownerType, Class<FieldType> valueType) throws NoSuchFieldException,IllegalArgumentException{
+    public ClassField(FieldSetter fieldSetter, String fieldName, Class<ClassType> ownerType, Class<FieldType> valueType){
         this.fieldSetter = fieldSetter;
         this.fieldName = fieldName;
-        checkIfFieldTypeIsAppropriate(ownerType,valueType,fieldName);
+        if(!checkIfFieldTypeIsAppropriate(ownerType,valueType,fieldName)){
+           throw new IllegalArgumentException();
+        }
     }
 
-    private void checkIfFieldTypeIsAppropriate(Class<ClassType> ownerType, Class<FieldType> valueType, String fieldName) throws IllegalArgumentException,NoSuchFieldException{
-        if(!ownerType.getDeclaredField(fieldName).getType().isAssignableFrom(valueType)){
-            throw new IllegalArgumentException();
+    private boolean checkIfFieldTypeIsAppropriate(Class<ClassType> ownerType, Class<FieldType> valueType, String fieldName){
+        boolean isAppropriate;
+        try{
+            isAppropriate = ownerType.getDeclaredField(fieldName).getType().isAssignableFrom(valueType);
+        } catch (NoSuchFieldException noSuchFieldException){
+            isAppropriate = false;
         }
+        return isAppropriate;
     }
 
     public void setField(ClassType owner, FieldType value){
