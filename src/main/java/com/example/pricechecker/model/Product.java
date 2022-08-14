@@ -4,6 +4,7 @@ public class Product{
     private String name;
     private Long price;
     private String url;
+    private String siteName;
 
     public String getName() {
         return name;
@@ -27,5 +28,13 @@ public class Product{
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getSiteName() {
+        return siteName;
+    }
+
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
     }
 }
