@@ -1,20 +1,24 @@
-package com.example.pricechecker.model;
+package com.example.pricechecker.configurations;
 
 import com.example.pricechecker.logic.classCreators.ClassWithoutArgumentsCreator;
 import com.example.pricechecker.logic.collectionConverters.CollectionConverter;
 import com.example.pricechecker.logic.collectionConverters.OneElementCollectionConverter;
-import com.example.pricechecker.logic.parsing.pageParsers.OneAttributeFromElementsPageParser;
-import com.example.pricechecker.logic.parsing.pageParsers.OneAttributePageParser;
-import com.example.pricechecker.logic.parsing.pageParsers.TextPageParser;
+import com.example.pricechecker.logic.fieldSetter.FieldSetter;
+import com.example.pricechecker.logic.parsing.pageParsers.implemantations.OneAttributeFromElementsPageParser;
+import com.example.pricechecker.logic.parsing.pageParsers.implemantations.OneAttributePageParser;
+import com.example.pricechecker.logic.parsing.pageParsers.implemantations.TextPageParser;
+import com.example.pricechecker.model.ClassField;
+import com.example.pricechecker.model.Product;
 import com.example.pricechecker.model.parseInfo.classInfo.ClassParseInfo;
 import com.example.pricechecker.model.parseInfo.fieldInfo.FieldParseInfo;
-import com.example.pricechecker.model.parseInfo.page.PageParseInfo;
+import com.example.pricechecker.model.parseInfo.pageInfo.PageParseInfo;
+import com.example.pricechecker.model.parseInfo.siteInfo.SiteInfo;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class Configuration {
+public class ProductConfiguration {
     private final FieldSetter fieldSetter;
     private final ClassField<Product,Long> price;
     private final ClassField<Product,String> name;
@@ -25,7 +29,7 @@ public class Configuration {
 
     private final List<SiteInfo<Product>> siteInfoList = new ArrayList<>();
 
-    public Configuration(){
+    public ProductConfiguration(){
         fieldSetter = new FieldSetter();
         price = priceField();
         name = nameField();
@@ -54,9 +58,9 @@ public class Configuration {
                 return Optional.empty();
             }
         };
-        FieldParseInfo<Product,Long,String> priceParseInfo = new FieldParseInfo<Product,Long,String>(price,converter,List.of(new PageParseInfo<>(null,new OneAttributePageParser("span#prcIsum","content"))));
+        FieldParseInfo<Product,Long,String> priceParseInfo = new FieldParseInfo<>(price, converter, List.of(new PageParseInfo<>(null, new OneAttributePageParser("span#prcIsum", "content"))));
         FieldParseInfo<Product,String,String> nameParseInfo = new FieldParseInfo<>(name,new OneElementCollectionConverter<>(),List.of(new PageParseInfo<>(null,new TextPageParser("h1.x-item-title__mainTitle span.ux-textspans--BOLD"))));
-        ClassParseInfo<Product> classParseInfo = new ClassParseInfo<Product>(new ClassWithoutArgumentsCreator<>(Product.class),List.of(nameParseInfo,priceParseInfo),new ArrayList<>());
+        ClassParseInfo<Product> classParseInfo = new ClassParseInfo<>(new ClassWithoutArgumentsCreator<>(Product.class), List.of(nameParseInfo, priceParseInfo), new ArrayList<>());
         siteInfo.setClassParseInfo(classParseInfo);
         return siteInfo;
     }
@@ -73,9 +77,9 @@ public class Configuration {
                 return Optional.empty();
             }
         };
-        FieldParseInfo<Product,Long,String> priceParseInfo = new FieldParseInfo<Product,Long,String>(price,converter,List.of(new PageParseInfo<>(null,new OneAttributePageParser("span.g-price span.g-item-data","data-price"))));
+        FieldParseInfo<Product,Long,String> priceParseInfo = new FieldParseInfo<>(price, converter, List.of(new PageParseInfo<>(null, new OneAttributePageParser("span.g-price span.g-item-data", "data-price"))));
         FieldParseInfo<Product,String,String> nameParseInfo = new FieldParseInfo<>(name,new OneElementCollectionConverter<>(),List.of(new PageParseInfo<>(null,new TextPageParser("div.content__header h1[itemprop='name']"))));
-        ClassParseInfo<Product> classParseInfo = new ClassParseInfo<Product>(new ClassWithoutArgumentsCreator<>(Product.class),List.of(nameParseInfo,priceParseInfo),new ArrayList<>());
+        ClassParseInfo<Product> classParseInfo = new ClassParseInfo<>(new ClassWithoutArgumentsCreator<>(Product.class), List.of(nameParseInfo, priceParseInfo), new ArrayList<>());
         siteInfo.setClassParseInfo(classParseInfo);
         return siteInfo;
     }

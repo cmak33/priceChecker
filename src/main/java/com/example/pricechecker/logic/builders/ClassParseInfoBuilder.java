@@ -1,13 +1,10 @@
-package com.example.pricechecker.logic.parsing.classParsers.builders;
+package com.example.pricechecker.logic.builders;
 
 import com.example.pricechecker.logic.classCreators.ClassCreator;
 import com.example.pricechecker.logic.classCreators.ClassWithoutArgumentsCreator;
-import com.example.pricechecker.model.ClassField;
 import com.example.pricechecker.model.parseInfo.classInfo.ClassParseInfo;
 import com.example.pricechecker.model.parseInfo.fieldInfo.CompositeFieldParseInfo;
 import com.example.pricechecker.model.parseInfo.fieldInfo.FieldParseInfo;
-
-import java.net.URI;
 
 public class ClassParseInfoBuilder<T>{
     private final ClassParseInfo<T> classParseInfo;

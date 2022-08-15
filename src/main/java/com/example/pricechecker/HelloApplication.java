@@ -1,16 +1,9 @@
 package com.example.pricechecker;
 
-import com.example.pricechecker.logic.httpRequests.HttpRequestsExecutor;
-import com.example.pricechecker.logic.parsing.classParsers.ClassParser;
-import com.example.pricechecker.logic.parsing.html.*;
-import com.example.pricechecker.logic.parsing.pageParsers.OneAttributeFromElementsPageParser;
-import com.example.pricechecker.logic.parsing.pageParsers.UrlParser;
 import com.example.pricechecker.model.ClassField;
-import com.example.pricechecker.model.FieldSetter;
+import com.example.pricechecker.logic.fieldSetter.FieldSetter;
 import com.example.pricechecker.model.Product;
-import com.example.pricechecker.model.parseInfo.classInfo.ClassParseInfo;
-import com.example.pricechecker.model.parseInfo.fieldInfo.FieldParseInfo;
-import com.example.pricechecker.model.parseInfo.page.PageParseInfo;
+import com.example.pricechecker.model.parseInfo.pageInfo.PageParseInfo;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,10 +13,6 @@ import org.jsoup.nodes.Document;
 
 import java.io.*;
 import java.net.URI;
-import java.text.Format;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class HelloApplication extends Application {

@@ -9,7 +9,6 @@ public class CompositeFieldParseInfo<ClassType, FieldType>{
 
     public CompositeFieldParseInfo(CompositeFieldParseInfo<ClassType,FieldType> compositeFieldParseInfo){
         this(compositeFieldParseInfo.field,compositeFieldParseInfo.classParseInfo.clone());
-
     }
 
     public CompositeFieldParseInfo(ClassField<ClassType, FieldType> field, ClassParseInfo<FieldType> classParseInfo) {

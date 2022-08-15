@@ -1,19 +1,19 @@
-package com.example.pricechecker.model;
+package com.example.pricechecker.logic.parsing.classParsers;
 
-import com.example.pricechecker.logic.parsing.classParsers.Callback;
+import com.example.pricechecker.logic.callbacks.Callback;
 import com.example.pricechecker.logic.parsing.classParsers.ClassParser;
-import com.example.pricechecker.logic.parsing.classParsers.NoArgumentsCallback;
-import com.example.pricechecker.logic.parsing.classParsers.TimesCalledCallback;
-import com.example.pricechecker.logic.parsing.classParsers.builders.ProductInfoBuilder;
-import com.example.pricechecker.logic.parsing.pageParsers.UrlParser;
-import com.example.pricechecker.model.parseInfo.classInfo.ClassParseInfo;
+import com.example.pricechecker.logic.callbacks.NoArgumentsCallback;
+import com.example.pricechecker.logic.callbacks.TimesCalledCallback;
+import com.example.pricechecker.logic.builders.ProductInfoBuilder;
+import com.example.pricechecker.logic.parsing.urlParsers.UrlParser;
+import com.example.pricechecker.model.Product;
+import com.example.pricechecker.model.parseInfo.siteInfo.SiteInfo;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class ProductParser {
     private final ClassParser classParser;
@@ -25,7 +25,7 @@ public class ProductParser {
         this.urlParser = urlParser;
     }
 
-    public List<Product> parseProducts(String productName,int maxPerSite, List<SiteInfo<Product>> siteInfoList){
+    public List<Product> parseProducts(String productName, int maxPerSite, List<SiteInfo<Product>> siteInfoList){
         List<Product> products = new ArrayList<>();
         siteInfoList.forEach(siteInfo->{
             List<String> urls = urlParser.findItemsUrls(productName, siteInfo.getFindPageFormat(), maxPerSite, siteInfo.getUrlParser()).stream().limit(maxPerSite).toList();

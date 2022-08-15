@@ -1,5 +1,7 @@
 package com.example.pricechecker.model;
 
+import com.example.pricechecker.logic.fieldSetter.FieldSetter;
+
 public class ClassField<ClassType, FieldType>{
     private final FieldSetter fieldSetter;
     private final String fieldName;

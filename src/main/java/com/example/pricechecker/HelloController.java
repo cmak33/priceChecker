@@ -2,20 +2,17 @@ package com.example.pricechecker;
 
 import com.example.pricechecker.logic.httpRequests.HttpRequestsExecutor;
 import com.example.pricechecker.logic.parsing.classParsers.ClassParser;
-import com.example.pricechecker.logic.parsing.html.HtmlParser;
-import com.example.pricechecker.logic.parsing.pageParsers.UrlParser;
-import com.example.pricechecker.model.Configuration;
+import com.example.pricechecker.logic.parsing.htmlParsers.HtmlParser;
+import com.example.pricechecker.logic.parsing.urlParsers.UrlParser;
+import com.example.pricechecker.configurations.ProductConfiguration;
 import com.example.pricechecker.model.Product;
-import com.example.pricechecker.model.ProductOperations;
-import com.example.pricechecker.model.ProductParser;
+import com.example.pricechecker.logic.productOperations.ProductOperations;
+import com.example.pricechecker.logic.parsing.classParsers.ProductParser;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +27,7 @@ public class HelloController {
     @FXML
     void onClick(ActionEvent event) {
         int perSite = 3;
-        Configuration configuration = new Configuration();
+        ProductConfiguration configuration = new ProductConfiguration();
         HttpRequestsExecutor executor = new HttpRequestsExecutor();
         ProductParser productParser = new ProductParser(new ClassParser(new HtmlParser(),executor),new UrlParser(executor));
         productParser.parseProductsAsync(productName.getText(),perSite,configuration.getSiteInfoList(),this::onFound);

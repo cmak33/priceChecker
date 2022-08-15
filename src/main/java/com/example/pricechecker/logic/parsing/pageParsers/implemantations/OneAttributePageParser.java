@@ -1,11 +1,12 @@
-package com.example.pricechecker.logic.parsing.pageParsers;
+package com.example.pricechecker.logic.parsing.pageParsers.implemantations;
 
+import com.example.pricechecker.logic.parsing.pageParsers.abstracts.AttributePageParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 import java.util.Optional;
 
-public class OneAttributePageParser extends AttributePageParser<String>{
+public class OneAttributePageParser extends AttributePageParser<String> {
     public OneAttributePageParser(String selectQuery, String attribute) {
         super(selectQuery, attribute);
     }

@@ -1,8 +1,8 @@
-package com.example.pricechecker.model.parseInfo.page;
+package com.example.pricechecker.model.parseInfo.fieldInfo;
 
 import com.example.pricechecker.logic.collectionConverters.CollectionConverter;
-import com.example.pricechecker.model.parseInfo.fieldInfo.FieldParseInfo;
 import com.example.pricechecker.model.ClassField;
+import com.example.pricechecker.model.parseInfo.pageInfo.PageParseInfo;
 
 import java.util.List;
 

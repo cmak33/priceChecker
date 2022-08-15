@@ -1,4 +1,4 @@
-package com.example.pricechecker.logic.parsing.classParsers;
+package com.example.pricechecker.logic.callbacks;
 
 public class TimesCalledCallback implements NoArgumentsCallback{
     private final NoArgumentsCallback callback;

@@ -1,6 +1,6 @@
-package com.example.pricechecker.model.parseInfo.page;
+package com.example.pricechecker.model.parseInfo.pageInfo;
 
-import com.example.pricechecker.logic.parsing.pageParsers.PageParser;
+import com.example.pricechecker.logic.parsing.pageParsers.interfaces.PageParser;
 
 import java.net.URI;
 
