@@ -1,6 +1,6 @@
 package com.example.pricechecker.model.parseInfo.fieldInfo;
 
-import com.example.pricechecker.cloning.Cloneable;
+import com.example.pricechecker.logic.cloning.Cloneable;
 import com.example.pricechecker.logic.collectionConverters.CollectionConverter;
 import com.example.pricechecker.model.ClassField;
 import com.example.pricechecker.model.parseInfo.pageInfo.PageParseInfo;

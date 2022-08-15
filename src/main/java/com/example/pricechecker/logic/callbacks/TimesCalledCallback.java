@@ -15,7 +15,6 @@ public class TimesCalledCallback implements NoArgumentsCallback{
         currentCount++;
         if(currentCount==neededCount){
             callback.call();
-            System.out.println(currentCount);
         }
     }
 }
