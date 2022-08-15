@@ -20,20 +20,20 @@ public class HttpRequestsExecutor {
     }
 
     public Optional<String> receiveHtml(URI uri){
-        return executeRequestSync(uri, HttpResponse.BodyHandlers.ofString()).map(HttpResponse::body);
+        return executeRequestBySendMethod(uri, HttpResponse.BodyHandlers.ofString()).map(HttpResponse::body);
     }
 
-    public <T> Optional<HttpResponse<T>> executeRequestSync(URI uri,BodyHandler<T> bodyHandler){
+    public <T> Optional<HttpResponse<T>> executeRequestBySendMethod(URI uri, BodyHandler<T> bodyHandler){
         SendMethod<HttpResponse<T>,T> sendMethod = HttpClient::send;
-        return executeRequest(uri,sendMethod,bodyHandler);
+        return executeRequestBySendMethod(uri,sendMethod,bodyHandler);
     }
 
     public <T> Optional<CompletableFuture<HttpResponse<T>>> executeRequestAsync(URI uri,BodyHandler<T> bodyHandler){
         SendMethod<CompletableFuture<HttpResponse<T>>,T> sendMethod = HttpClient::sendAsync;
-        return executeRequest(uri,sendMethod,bodyHandler);
+        return executeRequestBySendMethod(uri,sendMethod,bodyHandler);
     }
 
-    private <R,T> Optional<R> executeRequest(URI uri,SendMethod<R,T> sendMethod,BodyHandler<T> bodyHandler){
+    private <R,T> Optional<R> executeRequestBySendMethod(URI uri, SendMethod<R,T> sendMethod, BodyHandler<T> bodyHandler){
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest httpRequest = HttpRequest.newBuilder(uri).GET().build();
         Optional<R> result;
