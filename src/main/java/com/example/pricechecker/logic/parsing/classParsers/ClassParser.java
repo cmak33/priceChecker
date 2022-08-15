@@ -46,7 +46,6 @@ public record ClassParser(HtmlParser htmlParser,
             parsedPage.ifPresent(collection::add);
         });
         parseInfo.setValue(owner,collection);
-        System.out.println("field set");
     }
 
     private <T> Optional<T> parsePage(PageParseInfo<T> pageInfo){
