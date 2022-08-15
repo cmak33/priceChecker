@@ -2,47 +2,44 @@ package com.example.pricechecker.logic.parsing.urlParsers;
 
 import com.example.pricechecker.logic.httpRequests.HttpRequestsExecutor;
 import com.example.pricechecker.logic.parsing.pageParsers.interfaces.PageParser;
+import com.example.pricechecker.logic.parsing.urlParsers.uriFromStringCreator.UriFromStringCreator;
+import com.example.pricechecker.logic.parsing.urlParsers.urlCreators.UrlCreatorByPageNumber;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UrlParser {
-    private final HttpRequestsExecutor requestsExecutor;
+public record UrlParser(HttpRequestsExecutor requestsExecutor) {
 
-    public UrlParser(HttpRequestsExecutor requestsExecutor) {
-        this.requestsExecutor = requestsExecutor;
-    }
-
-    // fix this please
-    public List<String> findItemsUrls(String name,String pageUrlFormat, int maxUrlsCount, PageParser<List<String>> pageParser){
+    public List<String> findItemsUrls(UrlCreatorByPageNumber urlCreator, int maxUrlsCount, PageParser<List<String>> pageParser) {
         List<String> urls = new ArrayList<>();
         int currentPage = 1;
-        String currentUrl;
-        Optional<String> html;
-        Optional<List<String>> foundUrls = Optional.empty();
-        do{
-            currentUrl = String.format(pageUrlFormat,name,currentPage);
-            try {
-                html = requestsExecutor.receiveHtml(new URI(currentUrl));
-                if(html.isPresent()){
-                    foundUrls = pageParser.parseValue(html.get());
-                    if(foundUrls.isPresent()){
-                        urls.addAll(foundUrls.get());
-                    }
+        boolean shouldContinue;
+        do {
+            shouldContinue = false;
+            String url = urlCreator.createUrl(currentPage);
+            Optional<URI> uri = UriFromStringCreator.createUri(url);
+            if(uri.isPresent()){
+                Optional<List<String>> foundUrls = findUrlsByUri(uri.get(),pageParser);
+                if(foundUrls.isPresent()){
+                    urls.addAll(foundUrls.get());
+                    shouldContinue = urls.size()<maxUrlsCount;
                 }
-            } catch (URISyntaxException uriSyntaxException){
-                html = Optional.empty();
             }
             currentPage++;
-        } while(html.isPresent() && foundUrls.isPresent() && !foundUrls.get().isEmpty() && urls.size()<maxUrlsCount);
+        } while (shouldContinue);
         return urls;
     }
 
-
-
-
-
+    private Optional<List<String>> findUrlsByUri(URI uri,PageParser<List<String>> pageParser){
+        Optional<List<String>> foundUrls;
+        Optional<String> html = requestsExecutor.receiveHtml(uri);
+        if (html.isPresent()) {
+            foundUrls = pageParser.parseValue(html.get());
+        } else{
+            foundUrls = Optional.empty();
+        }
+        return foundUrls;
+    }
 }
