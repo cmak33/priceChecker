@@ -5,14 +5,14 @@ public class ClassField<ClassType, FieldType>{
     private final String fieldName;
 
     public ClassField(FieldSetter fieldSetter, String fieldName, Class<ClassType> ownerType, Class<FieldType> valueType){
+        if(!isFieldTypeAppropriate(ownerType,valueType,fieldName)){
+            throw new IllegalArgumentException();
+        }
         this.fieldSetter = fieldSetter;
         this.fieldName = fieldName;
-        if(!checkIfFieldTypeIsAppropriate(ownerType,valueType,fieldName)){
-           throw new IllegalArgumentException();
-        }
     }
 
-    private boolean checkIfFieldTypeIsAppropriate(Class<ClassType> ownerType, Class<FieldType> valueType, String fieldName){
+    private boolean isFieldTypeAppropriate(Class<ClassType> ownerType, Class<FieldType> valueType, String fieldName){
         boolean isAppropriate;
         try{
             isAppropriate = ownerType.getDeclaredField(fieldName).getType().isAssignableFrom(valueType);
