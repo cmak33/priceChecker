@@ -2,7 +2,6 @@ package com.example.pricechecker;
 
 import com.example.pricechecker.logic.httpRequests.HttpRequestsExecutor;
 import com.example.pricechecker.logic.parsing.classParsers.ClassParser;
-import com.example.pricechecker.logic.parsing.htmlParsers.HtmlParser;
 import com.example.pricechecker.logic.parsing.urlParsers.UrlParser;
 import com.example.pricechecker.configurations.ProductConfiguration;
 import com.example.pricechecker.model.Product;
@@ -29,7 +28,7 @@ public class HelloController {
         int perSite = 3;
         ProductConfiguration configuration = new ProductConfiguration();
         HttpRequestsExecutor executor = new HttpRequestsExecutor();
-        ProductParser productParser = new ProductParser(new ClassParser(new HtmlParser(),executor),new UrlParser(executor));
+        ProductParser productParser = new ProductParser(new ClassParser(executor),new UrlParser(executor));
         productParser.parseProductsAsync(productName.getText(),perSite,configuration.getSiteInfoList(),this::onFound);
     }
 

@@ -4,7 +4,7 @@ import com.example.pricechecker.logic.collectionConverters.OneElementCollectionC
 import com.example.pricechecker.model.ClassField;
 import com.example.pricechecker.model.parseInfo.pageInfo.PageParseInfo;
 
-public class OneElementFieldInfo<ClassType,FieldType> extends OnePageFieldInfo<ClassType,FieldType> {
+public class OneElementFieldInfo<ClassType,FieldType> extends OnePageFieldInfo<ClassType,FieldType,FieldType> {
     public OneElementFieldInfo(ClassField<ClassType, FieldType> field, PageParseInfo<FieldType> pagesParseInfo) {
         super(field, new OneElementCollectionConverter<>(), pagesParseInfo);
     }

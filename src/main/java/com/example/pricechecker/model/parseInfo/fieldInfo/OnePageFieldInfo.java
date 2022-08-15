@@ -6,8 +6,8 @@ import com.example.pricechecker.model.parseInfo.pageInfo.PageParseInfo;
 
 import java.util.List;
 
-public class OnePageFieldInfo<ClassType,FieldType> extends FieldParseInfo<ClassType,FieldType,FieldType> {
-    public OnePageFieldInfo(ClassField<ClassType, FieldType> field, CollectionConverter<FieldType, FieldType> collectionConverter, PageParseInfo<FieldType> pagesParseInfo) {
+public class OnePageFieldInfo<ClassType,FieldType,CollectionType> extends FieldParseInfo<ClassType,FieldType,CollectionType> {
+    public OnePageFieldInfo(ClassField<ClassType, FieldType> field, CollectionConverter<FieldType, CollectionType> collectionConverter, PageParseInfo<CollectionType> pagesParseInfo) {
         super(field, collectionConverter, List.of(pagesParseInfo));
     }
 }
