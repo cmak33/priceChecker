@@ -22,7 +22,7 @@ public class ClassParseInfoBuilder<T>{
     }
 
     public  static <A> ClassParseInfoBuilder<A> createBuilderWithClone(ClassParseInfo<A> classParseInfo){
-        return new ClassParseInfoBuilder<A>(classParseInfo.clone());
+        return new ClassParseInfoBuilder<A>(classParseInfo.cloneObject());
     }
 
     public ClassParseInfoBuilder<T> addFieldInfo(FieldParseInfo<T,?,?> fieldParseInfo){

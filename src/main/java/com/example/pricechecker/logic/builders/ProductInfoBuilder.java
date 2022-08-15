@@ -12,7 +12,7 @@ public class ProductInfoBuilder extends ClassParseInfoBuilder<Product>{
     }
 
     public static ProductInfoBuilder fromClone(ClassParseInfo<Product> productClassParseInfo){
-        return new ProductInfoBuilder(productClassParseInfo.clone());
+        return new ProductInfoBuilder(productClassParseInfo.cloneObject());
     }
 
     public ProductInfoBuilder(ClassParseInfo<Product> classParseInfo) {
