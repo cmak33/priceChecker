@@ -37,4 +37,12 @@ public class Product{
     public void setSiteName(String siteName) {
         this.siteName = siteName;
     }
+
+    @Override
+    public String toString(){
+        return "site: " + siteName + "\n" +
+                "url: " + url + "\n" +
+                "name: " + name + "\n" +
+                "price: " + price + "\n";
+    }
 }

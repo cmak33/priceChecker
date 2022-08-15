@@ -5,7 +5,7 @@ import com.example.pricechecker.logic.parsing.classParsers.ClassParser;
 import com.example.pricechecker.logic.parsing.urlParsers.UrlParser;
 import com.example.pricechecker.configurations.ProductConfiguration;
 import com.example.pricechecker.model.Product;
-import com.example.pricechecker.logic.productOperations.ProductOperations;
+import com.example.pricechecker.logic.productOperations.ProductSorter;
 import com.example.pricechecker.logic.parsing.classParsers.ProductParser;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,9 +34,9 @@ public class HelloController {
 
     private void onFound(List<Product> products){
         int limit = 4;
-        ProductOperations operations = new ProductOperations();
+        ProductSorter operations = new ProductSorter();
         products = operations.findCheapest(products,limit);
-        String str = products.stream().map(operations::toString).collect(Collectors.joining());
+        String str = products.stream().map(Product::toString).collect(Collectors.joining());
         text.setText(str);
     }
 }
