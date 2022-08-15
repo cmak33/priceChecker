@@ -1,21 +1,20 @@
 package com.example.pricechecker.logic.classCreators;
 
 public record ClassWithoutArgumentsCreator<T>(Class<T> clazz) implements ClassCreator<T> {
-    public ClassWithoutArgumentsCreator(Class<T> clazz) {
-        this.clazz = clazz;
-        if (!checkIfClassHaveNoArgumentsConstructor(clazz)) {
+    public ClassWithoutArgumentsCreator{
+        if (!hasNoArgumentsConstructor(clazz)){
             throw new IllegalArgumentException("class has not appropriate constructor");
         }
     }
 
-    private boolean checkIfClassHaveNoArgumentsConstructor(Class<T> clazz) {
-        boolean constructorExists;
+    private boolean hasNoArgumentsConstructor(Class<T> clazz) {
+        boolean hasConstructor;
         try {
-            constructorExists = clazz.getConstructor().getParameterCount() == 0;
+            hasConstructor = clazz.getConstructor().getParameterCount() == 0;
         } catch (NoSuchMethodException exception) {
-            constructorExists = false;
+            hasConstructor = false;
         }
-        return constructorExists;
+        return hasConstructor;
     }
 
     @Override
@@ -23,7 +22,7 @@ public record ClassWithoutArgumentsCreator<T>(Class<T> clazz) implements ClassCr
         T value;
         try {
             value = clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception exception) {
+        } catch (Exception noSuchMethodException) {
             value = null;
         }
         return value;
