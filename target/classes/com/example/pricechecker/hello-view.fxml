@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
@@ -9,6 +10,6 @@
    <children>
       <TextField fx:id="productName" layoutX="90.0" layoutY="140.0" prefHeight="25.0" prefWidth="171.0" />
       <Button layoutX="150.0" layoutY="188.0" mnemonicParsing="false" onAction="#onClick" text="Find" />
-      <TextField fx:id="text" layoutX="359.0" layoutY="140.0" />
+      <TextArea fx:id="text" layoutX="320.0" layoutY="101.0" prefHeight="200.0" prefWidth="200.0" />
    </children>
 </AnchorPane>

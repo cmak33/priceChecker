@@ -10,9 +10,28 @@ import com.example.pricechecker.model.parseInfo.page.PageParseInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public record ClassParser(HtmlParser htmlParser,
                           HttpRequestsExecutor executor) {
+    public <T> void parseAsync(ClassParseInfo<T> parseInfo,Callback<T> callback){
+        T value = parseInfo.getClassCreator().create();
+        NoArgumentsCallback setValueCallback = ()->callback.call(value);
+        TimesCalledCallback returnCallback = new TimesCalledCallback(setValueCallback,1);
+        TimesCalledCallback simpleFieldsCallback = new TimesCalledCallback(returnCallback,parseInfo.getFieldParseInfoList().size());
+        TimesCalledCallback compositeFieldsCallback = new TimesCalledCallback(returnCallback,parseInfo.getCompositeFieldParseInfoList().size());
+        parseInfo.getFieldParseInfoList().forEach(field->CompletableFuture.runAsync(()->parseSimpleField(value,field)).thenAccept((result)->simpleFieldsCallback.call()));
+        parseInfo.getCompositeFieldParseInfoList().forEach(field->parseCompositeFieldAsync(value,field,compositeFieldsCallback));
+    }
+
+    private <ClassType,FieldType> void parseCompositeFieldAsync(ClassType owner, CompositeFieldParseInfo<ClassType,FieldType> compositeFieldParseInfo,NoArgumentsCallback callback){
+        parseAsync(compositeFieldParseInfo.getClassParseInfo(),(value)->{
+            compositeFieldParseInfo.getField().setField(owner,value);
+            callback.call();
+        });
+    }
+
+
     public <T> T parse(ClassParseInfo<T> parserInfo) {
         T value = parserInfo.getClassCreator().create();
         parserInfo.getFieldParseInfoList().forEach(field->parseSimpleField(value,field));
@@ -27,6 +46,7 @@ public record ClassParser(HtmlParser htmlParser,
             parsedPage.ifPresent(collection::add);
         });
         parseInfo.setValue(owner,collection);
+        System.out.println("field set");
     }
 
     private <T> Optional<T> parsePage(PageParseInfo<T> pageInfo){
