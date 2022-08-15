@@ -1,7 +1,6 @@
 package com.example.pricechecker.logic.parsing.classParsers;
 
 import com.example.pricechecker.logic.callbacks.Callback;
-import com.example.pricechecker.logic.parsing.classParsers.ClassParser;
 import com.example.pricechecker.logic.callbacks.NoArgumentsCallback;
 import com.example.pricechecker.logic.callbacks.TimesCalledCallback;
 import com.example.pricechecker.logic.builders.ProductInfoBuilder;

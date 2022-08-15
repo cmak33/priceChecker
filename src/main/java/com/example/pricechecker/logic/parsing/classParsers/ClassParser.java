@@ -4,7 +4,6 @@ import com.example.pricechecker.logic.callbacks.Callback;
 import com.example.pricechecker.logic.callbacks.NoArgumentsCallback;
 import com.example.pricechecker.logic.callbacks.TimesCalledCallback;
 import com.example.pricechecker.logic.httpRequests.HttpRequestsExecutor;
-import com.example.pricechecker.logic.parsing.htmlParsers.HtmlParser;
 import com.example.pricechecker.model.parseInfo.classInfo.ClassParseInfo;
 import com.example.pricechecker.model.parseInfo.fieldInfo.CompositeFieldParseInfo;
 import com.example.pricechecker.model.parseInfo.fieldInfo.FieldParseInfo;
@@ -15,8 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public record ClassParser(HtmlParser htmlParser,
-                          HttpRequestsExecutor executor) {
+public record ClassParser(HttpRequestsExecutor executor) {
     public <T> void parseAsync(ClassParseInfo<T> parseInfo, Callback<T> callback){
         T value = parseInfo.getClassCreator().create();
         NoArgumentsCallback setValueCallback = ()->callback.call(value);
