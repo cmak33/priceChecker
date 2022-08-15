@@ -1,7 +1,5 @@
 package com.example.pricechecker.logic.parsing.pageParsers.abstracts;
 
-import com.example.pricechecker.logic.parsing.pageParsers.abstracts.OneSelectQueryPageParser;
-
 public abstract class AttributePageParser<T> extends OneSelectQueryPageParser<T> {
     private final String attribute;
 

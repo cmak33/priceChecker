@@ -1,5 +1,6 @@
 package com.example.pricechecker.model.parseInfo.classInfo;
 
+import com.example.pricechecker.cloning.Cloneable;
 import com.example.pricechecker.logic.classCreators.ClassCreator;
 import com.example.pricechecker.model.parseInfo.fieldInfo.CompositeFieldParseInfo;
 import com.example.pricechecker.model.parseInfo.fieldInfo.FieldParseInfo;
@@ -7,7 +8,7 @@ import com.example.pricechecker.model.parseInfo.fieldInfo.FieldParseInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClassParseInfo<ClassType> implements Cloneable{
+public class ClassParseInfo<ClassType> implements Cloneable<ClassParseInfo<ClassType>> {
     private ClassCreator<ClassType> classCreator;
     private List<FieldParseInfo<ClassType, ?,?>> fieldParseInfoList;
     private List<CompositeFieldParseInfo<ClassType, ?>> compositeFieldParseInfoList;
@@ -47,10 +48,20 @@ public class ClassParseInfo<ClassType> implements Cloneable{
     }
 
     @Override
-    public ClassParseInfo<ClassType> clone() {
-        List<? extends FieldParseInfo<ClassType, ?, ?>> cloneFieldParseInfoList = fieldParseInfoList.stream()
-                .map(FieldParseInfo::new).toList();
-        List<? extends CompositeFieldParseInfo<ClassType, ?>> cloneCompositeFieldParseInfoList = compositeFieldParseInfoList.stream().map(CompositeFieldParseInfo::new).toList();
-        return new ClassParseInfo<>(classCreator,fieldParseInfoList,compositeFieldParseInfoList);
+    public ClassParseInfo<ClassType> cloneObject() {
+        return new ClassParseInfo<>(classCreator,cloneFieldInfoList(),cloneCompositeFieldInfoList());
     }
+
+    private List<FieldParseInfo<ClassType,?,?>> cloneFieldInfoList(){
+        List<FieldParseInfo<ClassType,?,?>> cloneList = new ArrayList<>();
+        fieldParseInfoList.forEach(fieldInfo->cloneList.add(fieldInfo.cloneObject()));
+        return cloneList;
+    }
+
+    private List<CompositeFieldParseInfo<ClassType,?>> cloneCompositeFieldInfoList(){
+        List<CompositeFieldParseInfo<ClassType,?>> cloneList = new ArrayList<>();
+        compositeFieldParseInfoList.forEach(fieldInfo->cloneList.add(fieldInfo.cloneObject()));
+        return cloneList;
+    }
+
 }

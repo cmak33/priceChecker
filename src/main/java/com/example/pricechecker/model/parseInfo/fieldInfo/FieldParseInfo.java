@@ -1,5 +1,6 @@
 package com.example.pricechecker.model.parseInfo.fieldInfo;
 
+import com.example.pricechecker.cloning.Cloneable;
 import com.example.pricechecker.logic.collectionConverters.CollectionConverter;
 import com.example.pricechecker.model.ClassField;
 import com.example.pricechecker.model.parseInfo.pageInfo.PageParseInfo;
@@ -7,14 +8,10 @@ import com.example.pricechecker.model.parseInfo.pageInfo.PageParseInfo;
 import java.util.List;
 import java.util.Optional;
 
-public class FieldParseInfo<ClassType, FieldType, CollectionType>{
+public class FieldParseInfo<ClassType, FieldType, CollectionType> implements Cloneable<FieldParseInfo<ClassType, FieldType, CollectionType>> {
     private final ClassField<ClassType, FieldType> field;
     private final CollectionConverter<FieldType, CollectionType> collectionConverter;
     private final List<PageParseInfo<CollectionType>> pagesParseInfo;
-
-    public FieldParseInfo(FieldParseInfo<ClassType,FieldType,CollectionType> fieldParseInfo){
-        this(fieldParseInfo.field,fieldParseInfo.collectionConverter,fieldParseInfo.pagesParseInfo);
-    }
 
     public FieldParseInfo(ClassField<ClassType, FieldType> field, CollectionConverter<FieldType, CollectionType> collectionConverter, List<PageParseInfo<CollectionType>> pagesParseInfo) {
         this.field = field;
@@ -29,5 +26,10 @@ public class FieldParseInfo<ClassType, FieldType, CollectionType>{
 
     public List<PageParseInfo<CollectionType>> getPagesParseInfo() {
         return pagesParseInfo;
+    }
+
+    @Override
+    public FieldParseInfo<ClassType, FieldType, CollectionType> cloneObject() {
+        return new FieldParseInfo<>(field,collectionConverter,pagesParseInfo);
     }
 }

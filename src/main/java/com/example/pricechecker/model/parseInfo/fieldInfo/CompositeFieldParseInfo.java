@@ -1,15 +1,12 @@
 package com.example.pricechecker.model.parseInfo.fieldInfo;
 
+import com.example.pricechecker.cloning.Cloneable;
 import com.example.pricechecker.model.ClassField;
 import com.example.pricechecker.model.parseInfo.classInfo.ClassParseInfo;
 
-public class CompositeFieldParseInfo<ClassType, FieldType>{
+public class CompositeFieldParseInfo<ClassType, FieldType> implements Cloneable<CompositeFieldParseInfo<ClassType, FieldType>> {
     private final ClassField<ClassType, FieldType> field;
     private final ClassParseInfo<FieldType> classParseInfo;
-
-    public CompositeFieldParseInfo(CompositeFieldParseInfo<ClassType,FieldType> compositeFieldParseInfo){
-        this(compositeFieldParseInfo.field,compositeFieldParseInfo.classParseInfo.clone());
-    }
 
     public CompositeFieldParseInfo(ClassField<ClassType, FieldType> field, ClassParseInfo<FieldType> classParseInfo) {
         this.field = field;
@@ -22,5 +19,10 @@ public class CompositeFieldParseInfo<ClassType, FieldType>{
 
     public ClassParseInfo<FieldType> getClassParseInfo() {
         return classParseInfo;
+    }
+
+    @Override
+    public CompositeFieldParseInfo<ClassType, FieldType> cloneObject() {
+        return new CompositeFieldParseInfo<>(field,classParseInfo.cloneObject());
     }
 }

@@ -6,6 +6,11 @@ import com.example.pricechecker.model.parseInfo.classInfo.ClassParseInfo;
 import java.util.List;
 
 public class SiteInfo<T>{
+    private String siteName;
+    private String findPageFormat;
+    private PageParser<List<String>> urlParser;
+    private ClassParseInfo<T> classParseInfo;
+
     public String getSiteName() {
         return siteName;
     }
@@ -37,10 +42,4 @@ public class SiteInfo<T>{
     public void setClassParseInfo(ClassParseInfo<T> classParseInfo) {
         this.classParseInfo = classParseInfo;
     }
-
-    private String siteName;
-    private String findPageFormat;
-    private PageParser<List<String>> urlParser;
-    private ClassParseInfo<T> classParseInfo;
-
 }
