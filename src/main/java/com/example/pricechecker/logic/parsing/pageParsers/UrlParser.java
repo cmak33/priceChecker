@@ -22,7 +22,7 @@ public class UrlParser {
         List<String> urls = new ArrayList<>();
         int currentPage = 1;
         String currentUrl;
-        Optional<String> html = Optional.empty();
+        Optional<String> html;
         Optional<List<String>> foundUrls = Optional.empty();
         do{
             currentUrl = String.format(pageUrlFormat,name,currentPage);

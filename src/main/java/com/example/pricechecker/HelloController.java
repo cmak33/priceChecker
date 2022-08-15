@@ -29,15 +29,18 @@ public class HelloController {
 
     @FXML
     void onClick(ActionEvent event) {
-        int perSite = 5;
-        int limit = 4;
+        int perSite = 3;
         Configuration configuration = new Configuration();
         HttpRequestsExecutor executor = new HttpRequestsExecutor();
         ProductParser productParser = new ProductParser(new ClassParser(new HtmlParser(),executor),new UrlParser(executor));
-        List<Product> list = productParser.parseProducts(productName.getText(),perSite,configuration.getSiteInfoList());
+        productParser.parseProductsAsync(productName.getText(),perSite,configuration.getSiteInfoList(),this::onFound);
+    }
+
+    private void onFound(List<Product> products){
+        int limit = 4;
         ProductOperations operations = new ProductOperations();
-        list = operations.findCheapest(list,limit);
-        String str = list.stream().map(operations::toString).collect(Collectors.joining());
+        products = operations.findCheapest(products,limit);
+        String str = products.stream().map(operations::toString).collect(Collectors.joining());
         text.setText(str);
     }
 }
