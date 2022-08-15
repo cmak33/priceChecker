@@ -1,4 +1,4 @@
-package com.example.pricechecker.logic.parsing.classParsers;
+package com.example.pricechecker.logic.callbacks;
 
 import java.util.ArrayList;
 import java.util.Collections;

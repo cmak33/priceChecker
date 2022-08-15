@@ -1,11 +1,10 @@
-package com.example.pricechecker.logic.parsing.pageParsers;
+package com.example.pricechecker.logic.parsing.urlParsers;
 
 import com.example.pricechecker.logic.httpRequests.HttpRequestsExecutor;
+import com.example.pricechecker.logic.parsing.pageParsers.interfaces.PageParser;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.Format;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

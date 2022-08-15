@@ -1,4 +1,4 @@
-package com.example.pricechecker.logic.parsing.classParsers.builders;
+package com.example.pricechecker.logic.builders;
 
 import com.example.pricechecker.logic.classCreators.ClassCreator;
 import com.example.pricechecker.model.Product;

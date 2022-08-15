@@ -1,9 +1,11 @@
-package com.example.pricechecker.model;
+package com.example.pricechecker.logic.productOperations;
+
+import com.example.pricechecker.model.Product;
 
 import java.util.List;
 
 public class ProductOperations {
-    public List<Product> findCheapest(List<Product> products,int limit){
+    public List<Product> findCheapest(List<Product> products, int limit){
         return products.stream().filter(x->x.getPrice()!=null).sorted((product1,product2)->product1.getPrice()>product2.getPrice()?1:-1).limit(limit).toList();
     }
 

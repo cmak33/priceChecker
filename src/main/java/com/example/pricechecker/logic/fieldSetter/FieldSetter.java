@@ -1,4 +1,4 @@
-package com.example.pricechecker.model;
+package com.example.pricechecker.logic.fieldSetter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

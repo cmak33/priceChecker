@@ -1,4 +1,4 @@
-package com.example.pricechecker.logic.parsing.html;
+package com.example.pricechecker.logic.parsing.htmlParsers;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
