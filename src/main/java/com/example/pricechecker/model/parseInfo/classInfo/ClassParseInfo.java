@@ -2,6 +2,7 @@ package com.example.pricechecker.model.parseInfo.classInfo;
 
 import com.example.pricechecker.logic.cloning.Cloneable;
 import com.example.pricechecker.logic.classCreators.ClassCreator;
+import com.example.pricechecker.logic.cloning.ListCloner;
 import com.example.pricechecker.model.parseInfo.fieldInfo.CompositeFieldParseInfo;
 import com.example.pricechecker.model.parseInfo.fieldInfo.FieldParseInfo;
 
@@ -49,19 +50,8 @@ public class ClassParseInfo<ClassType> implements Cloneable<ClassParseInfo<Class
 
     @Override
     public ClassParseInfo<ClassType> cloneObject() {
-        return new ClassParseInfo<>(classCreator,cloneFieldInfoList(),cloneCompositeFieldInfoList());
+        List<FieldParseInfo<ClassType,?,?>> clonedFieldParseInfoList = ListCloner.cloneList(fieldParseInfoList);
+        List<CompositeFieldParseInfo<ClassType,?>> clonedCompositeFieldParseInfoList = ListCloner.cloneList(compositeFieldParseInfoList);
+        return new ClassParseInfo<>(classCreator,clonedFieldParseInfoList,clonedCompositeFieldParseInfoList);
     }
-
-    private List<FieldParseInfo<ClassType,?,?>> cloneFieldInfoList(){
-        List<FieldParseInfo<ClassType,?,?>> cloneList = new ArrayList<>();
-        fieldParseInfoList.forEach(fieldInfo->cloneList.add(fieldInfo.cloneObject()));
-        return cloneList;
-    }
-
-    private List<CompositeFieldParseInfo<ClassType,?>> cloneCompositeFieldInfoList(){
-        List<CompositeFieldParseInfo<ClassType,?>> cloneList = new ArrayList<>();
-        compositeFieldParseInfoList.forEach(fieldInfo->cloneList.add(fieldInfo.cloneObject()));
-        return cloneList;
-    }
-
 }
