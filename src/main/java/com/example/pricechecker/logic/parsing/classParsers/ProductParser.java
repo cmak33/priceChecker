@@ -5,92 +5,106 @@ import com.example.pricechecker.logic.callbacks.NoArgumentsCallback;
 import com.example.pricechecker.logic.callbacks.TimesCalledCallback;
 import com.example.pricechecker.logic.builders.ProductInfoBuilder;
 import com.example.pricechecker.logic.parsing.urlParsers.UrlParser;
+import com.example.pricechecker.logic.parsing.urlParsers.uriFromStringCreator.UriFromStringCreator;
 import com.example.pricechecker.logic.parsing.urlParsers.urlCreators.UrlCreatorByNameAndPageNumber;
 import com.example.pricechecker.logic.parsing.urlParsers.urlCreators.UrlCreatorByPageNumber;
 import com.example.pricechecker.model.Product;
+import com.example.pricechecker.model.parseInfo.classInfo.ClassParseInfo;
 import com.example.pricechecker.model.parseInfo.siteInfo.SiteInfo;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class ProductParser {
-    private final ClassParser classParser;
-    private final UrlParser urlParser;
+public record ProductParser(ClassParser classParser,
+                            UrlParser urlParser) {
 
-
-    public ProductParser(ClassParser classParser,UrlParser urlParser) {
-        this.classParser = classParser;
-        this.urlParser = urlParser;
-    }
-
-    public List<Product> parseProducts(String productName, int maxPerSite, List<SiteInfo<Product>> siteInfoList){
+    public List<Product> parseProducts(String productName, int maxPerSite, List<SiteInfo<Product>> siteInfoList) {
         List<Product> products = new ArrayList<>();
-        siteInfoList.forEach(siteInfo->{
-            UrlCreatorByNameAndPageNumber urlCreator = new UrlCreatorByNameAndPageNumber(siteInfo.getFindPageFormat(),productName);
-            List<String> urls = urlParser.findItemsUrls(urlCreator, maxPerSite, siteInfo.getUrlParser()).stream().limit(maxPerSite).toList();
-            urls.forEach(url->{
-                try{
-                    URI uri = new URI(url);
-                    Product product = classParser.parse(ProductInfoBuilder.fromClone(siteInfo.getClassParseInfo()).setURI(uri).build());
-                    product.setSiteName(siteInfo.getSiteName());
-                    product.setUrl(url);
-                    products.add(product);
-                }catch (Exception e){
-                    System.out.println(e.getMessage());
-                }
-            });
+        siteInfoList.forEach(siteInfo -> {
+            UrlCreatorByNameAndPageNumber urlCreator = new UrlCreatorByNameAndPageNumber(siteInfo.getFindPageFormat(), productName);
+            List<Product> siteProducts = parseSiteProducts(urlCreator, maxPerSite, siteInfo);
+            products.addAll(siteProducts);
         });
         return products;
     }
 
-    public void parseProductsAsync(String productName, int maxPerSite, List<SiteInfo<Product>> siteInfoList, Callback<List<Product>> callback){
+    private List<Product> parseSiteProducts(UrlCreatorByPageNumber urlCreator, int maxProductsCountPerSite, SiteInfo<Product> siteInfo) {
+        List<String> urls = urlParser.findItemsUrls(urlCreator, maxProductsCountPerSite, siteInfo.getUrlParser());
+        List<Product> products = new ArrayList<>();
+        urls.forEach(url -> {
+            Optional<Product> product = parseProduct(url, siteInfo);
+            product.ifPresent(products::add);
+        });
+        return products;
+    }
+
+    private Optional<Product> parseProduct(String url, SiteInfo<Product> siteInfo) {
+        Optional<URI> uri = UriFromStringCreator.createUri(url);
+        Optional<Product> product;
+        if (uri.isPresent()) {
+            ClassParseInfo<Product> classParseInfo = createClassParseInfo(uri.get(), siteInfo.getClassParseInfo());
+            Product foundProduct = classParser.parse(classParseInfo);
+            foundProduct.setSiteName(siteInfo.getSiteName());
+            foundProduct.setUrl(url);
+            product = Optional.of(foundProduct);
+        } else {
+            product = Optional.empty();
+        }
+        return product;
+    }
+
+    public CompletableFuture<List<Product>> parseProductsAsync(String productName, int maxProductsCountPerSite, List<SiteInfo<Product>> siteInfoList) {
+        CompletableFuture<List<Product>> result = new CompletableFuture<>();
         List<Product> products = Collections.synchronizedList(new ArrayList<>());
-        NoArgumentsCallback returnCallback = ()->callback.call(products);
-        TimesCalledCallback timesCalledCallback = new TimesCalledCallback(returnCallback,siteInfoList.size());
-        Callback<List<Product>> siteCallback = (list)->{
+        NoArgumentsCallback setCompleteResultCallback = () -> result.complete(products);
+        TimesCalledCallback timesCalledCallback = new TimesCalledCallback(setCompleteResultCallback, siteInfoList.size());
+        Callback<List<Product>> siteCallback = (list) -> {
             products.addAll(list);
             timesCalledCallback.call();
         };
-        siteInfoList.forEach(siteInfo->{
-            UrlCreatorByNameAndPageNumber urlCreatorByNameAndPageNumber = new UrlCreatorByNameAndPageNumber(siteInfo.getFindPageFormat(),productName);
-            CompletableFuture.runAsync(()->parseSiteProductsAsync(urlCreatorByNameAndPageNumber,maxPerSite,siteInfo,siteCallback));
+        siteInfoList.forEach(siteInfo -> {
+            UrlCreatorByNameAndPageNumber urlCreatorByNameAndPageNumber = new UrlCreatorByNameAndPageNumber(siteInfo.getFindPageFormat(), productName);
+            CompletableFuture.runAsync(()->parseSiteProductsAsync(urlCreatorByNameAndPageNumber, maxProductsCountPerSite, siteInfo).thenAccept(siteCallback::call));
         });
+        return result;
     }
 
-    private void parseSiteProductsAsync(UrlCreatorByPageNumber urlCreator, int maxPerSite, SiteInfo<Product> siteInfo, Callback<List<Product>> callback){
-        List<String> urls = urlParser.findItemsUrls(urlCreator, maxPerSite, siteInfo.getUrlParser()).stream().limit(maxPerSite).toList();
+    private CompletableFuture<List<Product>> parseSiteProductsAsync(UrlCreatorByPageNumber urlCreator, int maxProductsCount, SiteInfo<Product> siteInfo) {
+        CompletableFuture<List<Product>> result = new CompletableFuture<>();
+        List<String> urls = urlParser.findItemsUrls(urlCreator, maxProductsCount, siteInfo.getUrlParser());
         List<Product> products = Collections.synchronizedList(new ArrayList<>());
-        NoArgumentsCallback returnCallback = ()-> callback.call(products);
-        TimesCalledCallback productsCallback = new TimesCalledCallback(returnCallback,urls.size());
-        Callback<Product> foundProductCallback = (product)->{
-            products.add(product);
+        NoArgumentsCallback resultCompleteCallback = () -> result.complete(products);
+        TimesCalledCallback productsCallback = new TimesCalledCallback(resultCompleteCallback, urls.size());
+        Callback<Optional<Product>> foundProductCallback = (product) -> {
+            product.ifPresent(products::add);
             productsCallback.call();
         };
-        urls.forEach(url->{
-            CompletableFuture.runAsync(()->parseProductAsync(url,siteInfo,foundProductCallback,productsCallback));
-        });
+        urls.forEach(url -> parseProductAsync(url, siteInfo).thenAccept(foundProductCallback::call));
+        return result;
     }
 
-    private void parseProductAsync(String url,SiteInfo<Product> siteInfo,Callback<Product> foundCallback,NoArgumentsCallback notFoundCallback){
-        URI uri = null;
-        boolean isUriAppropriate = true;
-        try{
-            uri = new URI(url);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            isUriAppropriate = false;
-            notFoundCallback.call();
-        }
-        if(isUriAppropriate){
-            Callback<Product> callback = (product)->{
+    private CompletableFuture<Optional<Product>> parseProductAsync(String url, SiteInfo<Product> siteInfo) {
+        CompletableFuture<Optional<Product>> result = new CompletableFuture<>();
+        Optional<URI> uri = UriFromStringCreator.createUri(url);
+        if (uri.isPresent()) {
+            Callback<Product> callback = (product) -> {
                 product.setSiteName(siteInfo.getSiteName());
                 product.setUrl(url);
-                foundCallback.call(product);
+                result.complete(Optional.of(product));
             };
-            classParser.parseAsync(ProductInfoBuilder.fromClone(siteInfo.getClassParseInfo()).setURI(uri).build(),callback);
+            ClassParseInfo<Product> classParseInfo = createClassParseInfo(uri.get(), siteInfo.getClassParseInfo());
+            classParser.parseAsync(classParseInfo).thenAccept(callback::call);
+        } else {
+            result.complete(Optional.empty());
         }
+        return result;
+    }
+
+    private ClassParseInfo<Product> createClassParseInfo(URI uri, ClassParseInfo<Product> originalInfo) {
+        return ProductInfoBuilder.cloneFrom(originalInfo).setURI(uri).build();
     }
 }

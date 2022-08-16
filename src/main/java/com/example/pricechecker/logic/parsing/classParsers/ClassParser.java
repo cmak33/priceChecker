@@ -1,6 +1,5 @@
 package com.example.pricechecker.logic.parsing.classParsers;
 
-import com.example.pricechecker.logic.callbacks.Callback;
 import com.example.pricechecker.logic.callbacks.NoArgumentsCallback;
 import com.example.pricechecker.logic.callbacks.TimesCalledCallback;
 import com.example.pricechecker.logic.httpRequests.HttpRequestsExecutor;
@@ -15,23 +14,36 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public record ClassParser(HttpRequestsExecutor executor) {
-    public <T> void parseAsync(ClassParseInfo<T> parseInfo, Callback<T> callback){
+    public <T> CompletableFuture<T> parseAsync(ClassParseInfo<T> parseInfo){
+        CompletableFuture<T> result = new CompletableFuture<>();
         T value = parseInfo.getClassCreator().create();
-        NoArgumentsCallback setValueCallback = ()->callback.call(value);
-        TimesCalledCallback returnCallback = new TimesCalledCallback(setValueCallback,1);
-        TimesCalledCallback simpleFieldsCallback = new TimesCalledCallback(returnCallback,parseInfo.getFieldParseInfoList().size());
-        TimesCalledCallback compositeFieldsCallback = new TimesCalledCallback(returnCallback,parseInfo.getCompositeFieldParseInfoList().size());
-        parseInfo.getFieldParseInfoList().forEach(field->CompletableFuture.runAsync(()->parseSimpleField(value,field)).thenAccept((result)->simpleFieldsCallback.call()));
-        parseInfo.getCompositeFieldParseInfoList().forEach(field->parseCompositeFieldAsync(value,field,compositeFieldsCallback));
+        NoArgumentsCallback completeResultValueCompletableFuture = ()->result.complete(value);
+        int fieldsCount = calculateFieldsCount(parseInfo);
+        TimesCalledCallback setFieldCallback = new TimesCalledCallback(completeResultValueCompletableFuture,fieldsCount);
+        parseInfo.getFieldParseInfoList()
+                .forEach(field->parseSimpleFieldAsync(value,field,setFieldCallback));
+        parseInfo.getCompositeFieldParseInfoList()
+                .forEach(field->parseCompositeFieldAsync(value,field,setFieldCallback));
+        return result;
+    }
+
+    private <T> int calculateFieldsCount(ClassParseInfo<T> classParseInfo){
+        return classParseInfo.getFieldParseInfoList().size() + classParseInfo.getCompositeFieldParseInfoList().size();
+    }
+
+    private <ClassType,FieldType,CollectionType> void parseSimpleFieldAsync(ClassType owner, FieldParseInfo<ClassType,FieldType,CollectionType> parseInfo,NoArgumentsCallback callback){
+        CompletableFuture
+                .runAsync(()->parseSimpleField(owner,parseInfo))
+                .thenAccept((result)->callback.call());
     }
 
     private <ClassType,FieldType> void parseCompositeFieldAsync(ClassType owner, CompositeFieldParseInfo<ClassType,FieldType> compositeFieldParseInfo,NoArgumentsCallback callback){
-        parseAsync(compositeFieldParseInfo.getClassParseInfo(),(value)->{
-            compositeFieldParseInfo.getField().setField(owner,value);
-            callback.call();
-        });
+        parseAsync(compositeFieldParseInfo.getClassParseInfo())
+                .thenAccept((value)->{
+                    compositeFieldParseInfo.getField().setField(owner,value);
+                    callback.call();
+                });
     }
-
 
     public <T> T parse(ClassParseInfo<T> parserInfo) {
         T value = parserInfo.getClassCreator().create();

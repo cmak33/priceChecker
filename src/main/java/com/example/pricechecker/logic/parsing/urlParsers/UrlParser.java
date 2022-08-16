@@ -29,7 +29,7 @@ public record UrlParser(HttpRequestsExecutor requestsExecutor) {
             }
             currentPage++;
         } while (shouldContinue);
-        return urls;
+        return urls.stream().limit(maxUrlsCount).toList();
     }
 
     private Optional<List<String>> findUrlsByUri(URI uri,PageParser<List<String>> pageParser){
