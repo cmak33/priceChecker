@@ -1,6 +1,7 @@
 package com.example.pricechecker.model.parseInfo.fieldInfo;
 
 import com.example.pricechecker.logic.cloning.Cloneable;
+import com.example.pricechecker.logic.cloning.ListCloner;
 import com.example.pricechecker.logic.collectionConverters.CollectionConverter;
 import com.example.pricechecker.model.ClassField;
 import com.example.pricechecker.model.parseInfo.pageInfo.PageParseInfo;
@@ -30,6 +31,6 @@ public class FieldParseInfo<ClassType, FieldType, CollectionType> implements Clo
 
     @Override
     public FieldParseInfo<ClassType, FieldType, CollectionType> cloneObject() {
-        return new FieldParseInfo<>(field,collectionConverter,pagesParseInfo);
+        return new FieldParseInfo<>(field,collectionConverter, ListCloner.cloneList(pagesParseInfo));
     }
 }
