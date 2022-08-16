@@ -1,14 +1,11 @@
 package com.example.pricechecker;
 
-import com.example.pricechecker.configurations.ProjectConfiguration;
-import com.example.pricechecker.logic.httpRequests.HttpRequestsExecutor;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.net.URI;
 
 public class HelloApplication extends Application {
     @Override
