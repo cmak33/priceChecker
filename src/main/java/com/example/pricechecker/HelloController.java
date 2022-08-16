@@ -25,15 +25,15 @@ public class HelloController {
 
     @FXML
     void onClick(ActionEvent event) {
-        int perSite = 3;
+        int perSite = 10;
         ProductConfiguration configuration = new ProductConfiguration();
         HttpRequestsExecutor executor = new HttpRequestsExecutor();
         ProductParser productParser = new ProductParser(new ClassParser(executor),new UrlParser(executor));
-        productParser.parseProductsAsync(productName.getText(),perSite,configuration.getSiteInfoList(),this::onFound);
+        productParser.parseProductsAsync(productName.getText(),perSite,configuration.getSiteInfoList()).thenAccept((result)->onFound(result));
     }
 
     private void onFound(List<Product> products){
-        int limit = 4;
+        int limit = 6;
         ProductSorter operations = new ProductSorter();
         products = operations.findCheapest(products,limit);
         String str = products.stream().map(Product::toString).collect(Collectors.joining());

@@ -46,13 +46,14 @@ public class ProductConfiguration {
         return new ClassField<>(fieldSetter,"name",Product.class,String.class);
     }
 
+    // fix price
     public SiteInfo<Product> ebayInfo(){
         SiteInfo<Product> siteInfo = new SiteInfo<>();
         siteInfo.setSiteName("ebay");
         siteInfo.setFindPageFormat("https://www.ebay.com/sch/i.html?_from=R40&_nkw=%s&_sacat=0&LH_TitleDesc=0&_pgn=%d");
         siteInfo.setUrlParser(new OneAttributeFromElementsPageParser("div.s-item__info a.s-item__link","href"));
         CollectionConverter<Long,String> converter = new FractionalNumberToLongConverter();
-        FieldParseInfo<Product,Long,String> priceParseInfo = new OnePageFieldInfo<>(price, converter,new PageParseInfo<>(new OneAttributePageParser("span#prcIsum", "content")));
+        FieldParseInfo<Product,Long,String> priceParseInfo = new OnePageFieldInfo<>(price, converter,new PageParseInfo<>(new OneAttributePageParser("div[itemprop='offers'] span[itemprop='price']", "content")));
         FieldParseInfo<Product,String,String> nameParseInfo = new OnePageFieldInfo<>(name,new OneElementCollectionConverter<>(),new PageParseInfo<>(new TextPageParser("h1.x-item-title__mainTitle span.ux-textspans--BOLD")));
         ClassParseInfo<Product> classParseInfo = new ClassParseInfo<>(new ClassWithoutArgumentsCreator<>(Product.class), List.of(nameParseInfo, priceParseInfo), new ArrayList<>());
         siteInfo.setClassParseInfo(classParseInfo);
