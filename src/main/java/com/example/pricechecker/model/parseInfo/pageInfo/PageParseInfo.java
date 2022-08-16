@@ -1,10 +1,11 @@
 package com.example.pricechecker.model.parseInfo.pageInfo;
 
+import com.example.pricechecker.logic.cloning.Cloneable;
 import com.example.pricechecker.logic.parsing.pageParsers.interfaces.PageParser;
 
 import java.net.URI;
 
-public class PageParseInfo<ValueType>{
+public class PageParseInfo<ValueType> implements Cloneable<PageParseInfo<ValueType>>{
     private URI uri;
     private PageParser<ValueType> pageParser;
 
@@ -31,5 +32,10 @@ public class PageParseInfo<ValueType>{
 
     public void setPageParser(PageParser<ValueType> pageParser) {
         this.pageParser = pageParser;
+    }
+
+    @Override
+    public PageParseInfo<ValueType> cloneObject() {
+        return new PageParseInfo<>(uri,pageParser);
     }
 }

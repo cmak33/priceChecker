@@ -1,12 +1,7 @@
 package com.example.pricechecker;
 
-import com.example.pricechecker.logic.httpRequests.HttpRequestsExecutor;
-import com.example.pricechecker.logic.parsing.classParsers.ClassParser;
-import com.example.pricechecker.logic.parsing.urlParsers.UrlParser;
-import com.example.pricechecker.configurations.ProductConfiguration;
+import com.example.pricechecker.configurations.ProjectConfiguration;
 import com.example.pricechecker.model.Product;
-import com.example.pricechecker.logic.productOperations.ProductSorter;
-import com.example.pricechecker.logic.parsing.classParsers.ProductParser;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
@@ -16,6 +11,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HelloController {
+    private final ProjectConfiguration projectConfiguration = new ProjectConfiguration();
+    private boolean isSearching = false;
+
     @FXML
     private TextField productName;
 
@@ -25,18 +23,19 @@ public class HelloController {
 
     @FXML
     void onClick(ActionEvent event) {
-        int perSite = 10;
-        ProductConfiguration configuration = new ProductConfiguration();
-        HttpRequestsExecutor executor = new HttpRequestsExecutor();
-        ProductParser productParser = new ProductParser(new ClassParser(executor),new UrlParser(executor));
-        productParser.parseProductsAsync(productName.getText(),perSite,configuration.getSiteInfoList()).thenAccept((result)->onFound(result));
+        if(!isSearching) {
+            isSearching = true;
+            projectConfiguration.getProductParser().parseProductsAsync(productName.getText(), projectConfiguration.getProductsPerSiteCount(), projectConfiguration.getProductConfiguration().getSiteInfoList())
+                    .thenAccept(this::onFound);
+        } else{
+            text.setText("Wait a little, application is searching now!");
+        }
     }
 
     private void onFound(List<Product> products){
-        int limit = 6;
-        ProductSorter operations = new ProductSorter();
-        products = operations.findCheapest(products,limit);
-        String str = products.stream().map(Product::toString).collect(Collectors.joining());
-        text.setText(str);
+        products = projectConfiguration.getSorter().findCheapest(products,projectConfiguration.getDisplayedProductsCount());
+        String productsDisplayString = products.stream().map(Product::toString).collect(Collectors.joining());
+        text.setText(productsDisplayString);
+        isSearching = false;
     }
 }
